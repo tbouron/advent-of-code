@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-const inputFile = 'input/day-1.txt';
+const inputFile = '../input/day-1.txt';
 const increaseCount = fs.readFileSync(inputFile, 'utf8')
     .split('\n')
     .map(item => parseInt(item))
