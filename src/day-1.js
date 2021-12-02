@@ -3,7 +3,8 @@ const path = require('path');
 
 const parsedInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
     .split('\n')
-    .map(item => parseInt(item));
+    .map(item => parseInt(item))
+    .filter(item => !isNaN(item));
 
 const calculateIncrease = list => list.reduce((acc, item, index, list) => {
     if (index > 0) {
