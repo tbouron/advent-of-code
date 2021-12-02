@@ -1,7 +1,7 @@
-import * as fs from 'fs';
+const fs = require('fs');
+const path = require('path');
 
-const inputFile = '../input/day-1.txt';
-const parsedInput = fs.readFileSync(inputFile, 'utf8')
+const parsedInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
     .split('\n')
     .map(item => parseInt(item));
 
@@ -12,14 +12,12 @@ const calculateIncrease = list => list.reduce((acc, item, index, list) => {
     return acc;
 }, 0);
 
-const increaseCount = calculateIncrease(parsedInput);
-const slidingWindowsCount = calculateIncrease(parsedInput
-    .reduce((acc, item, index, list) => {
+module.exports = {
+    'Part #1': calculateIncrease(parsedInput),
+    'Part #2': calculateIncrease(parsedInput.reduce((acc, item, index, list) => {
         if (index > 2) {
             acc.push(item + list[index - 1] + list[index - 2]);
         }
         return acc;
-    }, []));
-
-console.log(`Based on the input file "${inputFile}", the depth increases "${increaseCount}" times`);
-console.log(`Based on the input file "${inputFile}", the sliding windows increase "${slidingWindowsCount}" times`);
+    }, []))
+};
