@@ -75,30 +75,42 @@ const boards = parsedInput.map(boardInput => new Board(boardInput
     .flatMap(line => line.split(/\s+/))
     .map(item => parseInt(item))));
 
-let winnerBoard;
-let winnerNumber;
+let winnerBoards = [];
+let firstWinnerNumber;
+let lastWinnerNumber;
 for (let index in sequence) {
-    winnerNumber = sequence[index];
-    winnerBoards = boards.map(board => {
-        board.mark(winnerNumber);
+    const number = sequence[index];
+    const newWinnerBoards = boards.filter(b => !winnerBoards.includes(b)).map(board => {
+        board.mark(number);
         return board;
     }).filter(board => board.isWinner());
 
-    if (winnerBoards.length === 1) {
-        winnerBoard = winnerBoards[0];
+    winnerBoards.push(...newWinnerBoards);
+
+    if (!firstWinnerNumber && newWinnerBoards.length > 0) {
+        firstWinnerNumber = number;
+    }
+    if (newWinnerBoards.length > 0) {
+        lastWinnerNumber = number;
+    }
+    if (winnerBoards.length === boards.length) {
         break;
     }
 }
 
-if (!winnerBoard) {
+if (winnerBoards.length === 0) {
     console.log('Urgh, no winner!');
     return;
 }
 
-const part1 = winnerBoard.entries
+const part1 = winnerBoards[0].entries
     .filter(entry => entry.checked === false)
-    .reduce((acc, entry) => acc + entry.number, 0) * winnerNumber;
+    .reduce((acc, entry) => acc + entry.number, 0) * firstWinnerNumber;
+const part2 = winnerBoards.pop().entries
+    .filter(entry => entry.checked === false)
+    .reduce((acc, entry) => acc + entry.number, 0) * lastWinnerNumber;
 
 module.exports = {
-    'Part #1': part1
+    'Part #1': part1,
+    'Part #2': part2
 };
