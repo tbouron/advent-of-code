@@ -43,9 +43,13 @@ class Line {
         return this.start.y === this.end.y;
     }
 
-    // A line only ever horizontal, vertical or diagonal.
+    // i.e. is the line exactly 45 deg diagonal
     isDiagonal() {
-        return !this.isHorizontal() && !this.isVertical()
+        if (this.isHorizontal() || this.isVertical()) {
+            return false;
+        }
+
+        return Math.abs(Math.atan((this.start.x - this.end.x) / (this.start.y - this.end.y)) * 180 / Math.PI) === 45;
     }
 }
 
@@ -105,8 +109,12 @@ const lines = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, 
         return new Line(start, end);
     });
 const hAndVLines = lines.filter(line => line.isHorizontal() || line.isVertical());
+// As per the puzzle description, a line will only ever be horizontal, vertical or diagonal.
+// However, for the sake of the calculation, I prefer to actually filter for horizontal, vertical and true 45 deg
+// diagonal lines rather than assuming the input is ok (which is a bad practice in general)
+const hAndVandDLines = lines.filter(line => line.isHorizontal() || line.isVertical() || line.isDiagonal());
 
 module.exports = {
     'Part #1': new Grid(hAndVLines).countOverlappingPoints(),
-    'Part #2': new Grid(lines).countOverlappingPoints()
+    'Part #2': new Grid(hAndVandDLines).countOverlappingPoints()
 }
