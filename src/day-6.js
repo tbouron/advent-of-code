@@ -1,37 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 
-class LanternFish {
-    reset = 0
-    timer = 0;
+class LanternFishPool {
 
-    constructor(timer = 8, reset = 6) {
-        this.reset = reset;
-        this.timer = timer;
-    }
+    pool = {};
 
-    tick() {
-        if (this.timer < 1) {
-            this.timer = this.reset;
-            return new LanternFish();
+    constructor(initialFish) {
+        if (!Array.isArray(initialFish)) {
+            throw new Error('The initial fish for the pool are not in the right format. Expecting an array');
         }
 
-        this.timer--;
+        this.pool = initialFish.reduce((acc, timer) => {
+            if (!acc.hasOwnProperty(timer)) {
+                acc[timer] = 0;
+            }
+            acc[timer]++;
+            return acc;
+        }, this.generateEmptyPool());
+    }
+
+    simulate(days) {
+        for (let i = 0; i < days; i++) {
+            const newPool = this.generateEmptyPool();
+            Object.entries(this.pool).forEach(([timer, counter]) => {
+                if (parseInt(timer) === 0) {
+                    newPool[6] = counter;
+                    newPool[8] = counter;
+                } else {
+                    newPool[timer - 1] += counter;
+                }
+            });
+            this.pool = newPool;
+        }
+
+        return Object.values(this.pool).reduce((acc, counter) => acc + counter, 0);
+    }
+
+    generateEmptyPool() {
+        return Array(9).fill(0).reduce((acc, item, index) => {
+            acc[index] = item;
+            return acc;
+        }, {});
     }
 }
 
-const lanternFishes = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
+const initialInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
     .split('\n')
     .filter(l => l.trim() !== '')
-    .flatMap(l => l.split(','))
-    .map(intialTimer => new LanternFish(parseInt(intialTimer)));
-
-for (let i = 1; i <= 80; i++) {
-    lanternFishes.push(...lanternFishes
-        .map(lf => lf.tick())
-        .filter(lf => !!lf));
-}
+    .flatMap(l => l.split(','));
 
 module.exports = {
-    'Part #1': lanternFishes.length
+    'Part #1': new LanternFishPool(initialInput).simulate(80),
+    'Part #2': new LanternFishPool(initialInput).simulate(256)
 }
