@@ -116,6 +116,37 @@ function decode(encodedSignal, wireMapping) {
     }
 }
 
+function betterDecode(encodedSignal, encodedSignalFor1, encodedSignalFor4) {
+    // This mapping allows to deduce the 7 segment digit from:
+    // 1. the number of segments the encoded signal turns on
+    // 2. the number of segments in common with the encoded signal for the digit "1"
+    // 3. the number of segments in common with the encoded signal for the digit "4"
+    // It is easy to identify the digit "1" and "4" as the have respectively 2 and 4 segments turned on.
+    // All these combinations are unique hence why this is possible to decode that easily!
+    const mapping = {
+        '0': [6, 2, 3], // => 0
+        '1': [2, 2, 2], // => 1
+        '2': [5, 1, 2], // => 2
+        '3': [5, 2, 3], // => 3
+        '4': [4, 2, 4], // => 4
+        '5': [5, 1, 3], // => 5
+        '6': [6, 1, 3], // => 6
+        '7': [3, 2, 2], // => 7
+        '8': [7, 2, 4], // => 8
+        '9': [6, 2, 4]  // => 9
+    };
+
+    let find = Object.entries(mapping).find(([digit, match]) => encodedSignal.length === match[0]
+        && encodedSignal.split('').filter(segment => encodedSignalFor1.includes(segment)).length === match[1]
+        && encodedSignal.split('').filter(segment => encodedSignalFor4.includes(segment)).length === match[2]);
+
+    if (!find) {
+        throw new Error(`Fail to decode signal "${encodedSignal}`);
+    }
+
+    return find[0];
+}
+
 const initialInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
     .split('\n')
     .filter(l => l.trim() !== '');
@@ -129,15 +160,29 @@ const part1 = initialInput
         return count;
     }, 0);
 
-const part2 = initialInput
-    .map(l => {
-        const parts = l.split('|').map(p => p.trim().split(' ').map(item => item.trim()));
+// This is a *VERY* inefficient way to find the answer. Deduce digit 1, 4, 7 an 8 but then brute-force every possible
+// pattern until we find the right one. Ugly, but it works!
+// const part2 = initialInput
+//     .map(l => {
+//         const parts = l.split('|').map(p => p.trim().split(' ').map(item => item.trim()));
+//
+//         const mapping = getWireMapping(parts[0]);
+//
+//         return parseInt(parts[1].reduce((sum, encodedSignal) => sum + decode(encodedSignal, mapping), ''));
+//     })
+//     .reduce((sum, n) => sum + n, 0);
 
-        const mapping = getWireMapping(parts[0]);
+// This new implementation is so much more elegant but *NOT MINE*. Comes from the subreddit
+// https://www.reddit.com/r/adventofcode/comments/rbj87a/comment/hnpgp65/?utm_source=reddit&utm_medium=web2x&context=3
+// and is incredibly clever. See comment within the function "betterDecode"
+const part2 = initialInput.map(l => {
+    const encodedSignals = l.split(/\s+(|\s+)/);
+    const encodedSignalsToDecode = l.split('|')[1].trim().split(/\s+/);
+    const encodedSignalFor1 = encodedSignals.find(es => es.length === 2);
+    const encodedSignalFor4 = encodedSignals.find(es => es.length === 4);
 
-        return parseInt(parts[1].reduce((sum, encodedSignal) => sum + decode(encodedSignal, mapping), ''));
-    })
-    .reduce((sum, n) => sum + n, 0);
+    return parseInt(encodedSignalsToDecode.reduce((number, es) => number + betterDecode(es, encodedSignalFor1, encodedSignalFor4), ''));
+}).reduce((sum, number) => sum + number, 0);
 
 module.exports = {
     'Part #1': part1,
