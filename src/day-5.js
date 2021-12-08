@@ -45,11 +45,7 @@ class Line {
 
     // i.e. is the line exactly 45 deg diagonal
     isDiagonal() {
-        if (this.isHorizontal() || this.isVertical()) {
-            return false;
-        }
-
-        return Math.abs(Math.atan((this.start.x - this.end.x) / (this.start.y - this.end.y)) * 180 / Math.PI) === 45;
+        return Math.abs(this.end.x - this.start.x) === Math.abs(this.end.y - this.start.y);
     }
 }
 
