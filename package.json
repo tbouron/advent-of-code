@@ -1,12 +1,13 @@
 {
   "name": "advent-of-code-2021",
   "version": "1.0.0",
-  "description": "",
+  "description": "Pure Javascript/NodeJS implementation of the advent of code 2021 puzzles",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "puzzles": "node --expose-gc index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "nodejs", "javascript", "advent-of-code", "advent-of-code-2021"
+  ],
+  "author": "Thomas Bouron <tbouron@gmail.com>"
 }
