@@ -8,6 +8,7 @@ const sourceFolder = 'src';
 fs.readdirSync(sourceFolder)
     .filter(file => file.endsWith('.js'))
     .filter(file => dayToRun > 0 ? file === `day-${dayToRun}.js` : true)
+    .sort((a, b) => a.localeCompare(b, undefined, {numeric: true}))
     .map(file => path.join(__dirname, sourceFolder, file))
     .map(file => {
         const match = file.match(/day-(.*).js/);
