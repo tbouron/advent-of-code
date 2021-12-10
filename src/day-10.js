@@ -32,22 +32,26 @@ const pairs = [
     {
         start: '(',
         end: ')',
-        points: 3,
+        corruptedPoints: 3,
+        incompletePoints: 1
     },
     {
         start: '[',
         end: ']',
-        points: 57,
+        corruptedPoints: 57,
+        incompletePoints: 2
     },
     {
         start: '{',
         end: '}',
-        points: 1197,
+        corruptedPoints: 1197,
+        incompletePoints: 3
     },
     {
         start: '<',
         end: '>',
-        points: 25137,
+        corruptedPoints: 25137,
+        incompletePoints: 4
     }
 ];
 
@@ -59,6 +63,20 @@ const initialInput = fs.readFileSync(path.join(__dirname, `${path.basename(__fil
 const corruptedLines = initialInput
     .filter(result => typeof result === 'string');
 
+const incompleteLines = initialInput
+    .filter(result => Array.isArray(result))
+    .map(result => result
+        .reverse()
+        .map(t => pairs.find(p => p.start === t).end));
+
+const incompleteScores = incompleteLines
+    .map(missingTokens => missingTokens
+        .reduce((sum, missingToken) => {
+            return sum * 5 + pairs.find(p => p.end === missingToken).incompletePoints;
+        }, 0))
+    .sort((a, b) => b - a);
+
 module.exports = {
-    'Part #1': corruptedLines.reduce((sum, invalidToken) => sum + pairs.find(p => p.end === invalidToken).points, 0)
+    'Part #1': corruptedLines.reduce((sum, invalidToken) => sum + pairs.find(p => p.end === invalidToken).corruptedPoints, 0),
+    'Part #2': incompleteScores[Math.floor(incompleteScores.length / 2)]
 };
