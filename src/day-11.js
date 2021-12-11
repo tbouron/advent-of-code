@@ -56,14 +56,26 @@ function ripple(grid) {
     }
 }
 
-let grid = initialInput;
-Array(100).fill(0).forEach(() => {
-    grid.forEach(row => row.forEach(octopus => {
+let flashesAt100Step = 0;
+let flashesSynchronised = false;
+let step = 0;
+while (flashesSynchronised === false) {
+    step++;
+    initialInput.forEach(row => row.forEach(octopus => {
         octopus.energy++;
     }));
-    ripple(grid);
-})
+    ripple(initialInput);
+
+    if (step === 100) {
+        flashesAt100Step = initialInput.reduce((sum, row) => sum + row.reduce((sum, octopus) => sum + octopus.flashed, 0), 0);
+    }
+
+    if (initialInput.every(row => row.every(octopus => octopus.energy === 0))) {
+        flashesSynchronised = true;
+    }
+}
 
 module.exports = {
-    'Part #1': grid.reduce((sum, row) => sum + row.reduce((sum, octopus) => sum + octopus.flashed, 0), 0)
+    'Part #1': flashesAt100Step,
+    'Part #2': step
 };
