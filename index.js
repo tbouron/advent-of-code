@@ -5,6 +5,8 @@ const {performance} = require('perf_hooks');
 const dayToRun = parseInt(process.env.DAY) || 0;
 const sourceFolder = 'src';
 
+const suiteStart = performance.now();
+
 fs.readdirSync(sourceFolder)
     .filter(file => file.endsWith('.js'))
     .filter(file => dayToRun > 0 ? file === `day-${dayToRun}.js` : true)
@@ -49,3 +51,10 @@ fs.readdirSync(sourceFolder)
 
         console.log(message.join('\n'), o.error ? o.error : '');
     });
+
+if (dayToRun === 0) {
+    console.log([
+        '\n',
+        `=== Total suite ex. time: ${(performance.now() - suiteStart).toFixed(2)} ms === `
+    ].join('\n'));
+}
