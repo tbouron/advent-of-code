@@ -52,7 +52,35 @@ function parse(bin, versions, numbers, depth = 0, upTo = 0) {
             index += literalPacket.length;
         } else {
             // Operators
-            const operatorPacket = parseOperator(bin.substr(index), versions, numbers, depth);
+            const innerNumbers = [];
+            const operatorPacket = parseOperator(bin.substr(index), versions, innerNumbers, depth);
+            switch (currentType) {
+                case 0:
+                    numbers.push(innerNumbers.reduce((sum, number) => sum + number, 0));
+                    break;
+                case 1:
+                    numbers.push(innerNumbers.reduce((sum, number) => sum * number, 1));
+                    break;
+                case 2:
+                    numbers.push(Math.min(...innerNumbers));
+                    break;
+                case 3:
+                    numbers.push(Math.max(...innerNumbers));
+                    break;
+                case 5:
+                    numbers.push(innerNumbers[0] > innerNumbers[1] ? 1 : 0);
+                    break;
+                case 6:
+                    numbers.push(innerNumbers[0] < innerNumbers[1] ? 1 : 0);
+                    break;
+                case 7:
+                    numbers.push(innerNumbers[0] === innerNumbers[1] ? 1 : 0);
+                    break;
+                default:
+                    throw new Error(`Operator type ${currentType} not supported!`);
+            }
+
+
             console.debug(`${Array(depth).fill('==').join('')}=> Read operator: version [${currentVersion}] | type [${currentType}] --- mode [${operatorPacket.mode}]`);
             index += operatorPacket.length;
         }
@@ -105,7 +133,6 @@ function parseOperator(bin, versions, numbers, depth = 0) {
             throw new Error(`Error parsing packet ${subPacket}\nLength mismatch: Got ${subLength} but expected ${subPacketLength}`);
         }
         length += mode0BitsLength + subPacketLength;
-
     }
     if (mode === 1) {
         length += mode1BitsLength;
@@ -127,5 +154,6 @@ let numbers = [];
 parse(hexInput, versions, numbers);
 
 module.exports = {
-    'Part #1': versions.reduce((sum, version) => sum + version, 0)
+    'Part #1': versions.reduce((sum, version) => sum + version, 0),
+    'Part #2': numbers
 };
