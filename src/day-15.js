@@ -72,10 +72,8 @@ function hManhattan(grid, n) {
     return (grid.length - 1 - n.row) + (grid[n.row].length - 1 - n.col);
 }
 
-const initialInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
-    .split('\n')
-    .filter(l => l.trim() !== '')
-    .map((l, rowIndex) => l.split('').map((item, colIndex) => {
+function prepInput(input) {
+    return input.map((row, rowIndex) => row.map((item, colIndex) => {
         return {
             risk: parseInt(item),
             visited: false,
@@ -83,10 +81,32 @@ const initialInput = fs.readFileSync(path.join(__dirname, `${path.basename(__fil
             col: colIndex
         }
     }));
+}
 
-const maxRow = initialInput.length - 1;
-const maxCol = initialInput[initialInput.length - 1].length - 1;
+function shift(input, n) {
+    return input.map(i => {
+        return (i + n) < 10 ? i + n : (i + n) % 9;
+    });
+}
+
+const initialInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
+    .split('\n')
+    .filter(l => l.trim() !== '')
+    .map(l => l.split('').map(Number));
+
+const inputPart1 = prepInput(initialInput);
+const inputPart2 = prepInput(Array(5).fill(initialInput).reduce((acc, grid, rowIndex) => {
+    return acc.concat(grid.map(row => shift(Array(5).fill(row).flatMap((input, colIndex) => {
+        return shift(input, colIndex);
+    }), rowIndex)));
+}, []));
+
+const maxRowPart1 = inputPart1.length - 1;
+const maxColPart1 = inputPart1[inputPart1.length - 1].length - 1;
+const maxRowPart2 = inputPart2.length - 1;
+const maxColPart2 = inputPart2[inputPart2.length - 1].length - 1;
 
 module.exports = {
-    'Part #1': aStar(initialInput, initialInput[0][0], initialInput[maxRow][maxCol], hEuclidean)
+    'Part #1': aStar(inputPart1, inputPart1[0][0], inputPart1[maxRowPart1][maxColPart1], hEuclidean),
+    'Part #2': aStar(inputPart2, inputPart2[0][0], inputPart2[maxRowPart2][maxColPart2], hEuclidean),
 };
