@@ -93,6 +93,21 @@ while (count < 100) {
     count++;
 }
 
+const max = 600;
+const initialVelocities = [];
+const arrayLoop = Array(max).fill(-1 * max / 2).map((v, i) => v + i)
+
+arrayLoop.forEach(x => {
+    arrayLoop.forEach(y => {
+        const {success} = simulate(x, y, target);
+        if (success) {
+            // console.debug(`working initial velocities [${x}][${y}]`);
+            initialVelocities.push({x, y});
+        }
+    });
+})
+
 module.exports = {
-    'Part #1': maxHeight
+    'Part #1': maxHeight,
+    'Part #2': initialVelocities.length
 }
