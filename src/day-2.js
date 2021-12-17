@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const debug = require('debug')(path.basename(__filename));
 
 const parsedInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.js')}.txt`), 'utf8')
     .split('\n')
@@ -24,7 +25,7 @@ const part1 = parsedInput.reduce((acc, item) => {
             acc.depth += item.value;
             break;
         default:
-            console.log(`Unsupported action: "${item.action}" => Ignoring`);
+            debug(`Unsupported action: "${item.action}" => Ignoring`);
             break;
     }
     return acc;
@@ -46,7 +47,7 @@ const part2 = parsedInput.reduce((acc, item) => {
             acc.aim += item.value;
             break;
         default:
-            console.log(`Unsupported action: "${item.action}" => Ignoring`);
+            debug(`Unsupported action: "${item.action}" => Ignoring`);
             break;
     }
     return acc;

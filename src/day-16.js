@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const debug = require('debug')(path.basename(__filename));
 
 const hexMapping = {
     0: '0000',
@@ -48,7 +49,7 @@ function parse(bin, versions, numbers, depth = 0, upTo = 0) {
         if (currentType === 4) {
             // Literal value
             const literalPacket = parseLiteral(bin.substr(index), numbers);
-            console.debug(`${Array(depth).fill('==').join('')}=> Read literal: version [${currentVersion}] | type [${currentType}] ########## ${literalPacket.result}`);
+            debug(`${Array(depth).fill('==').join('')}=> Read literal: version [${currentVersion}] | type [${currentType}] ########## ${literalPacket.result}`);
             index += literalPacket.length;
         } else {
             // Operators
@@ -81,12 +82,12 @@ function parse(bin, versions, numbers, depth = 0, upTo = 0) {
             }
 
 
-            console.debug(`${Array(depth).fill('==').join('')}=> Read operator: version [${currentVersion}] | type [${currentType}] --- mode [${operatorPacket.mode}]`);
+            debug(`${Array(depth).fill('==').join('')}=> Read operator: version [${currentVersion}] | type [${currentType}] --- mode [${operatorPacket.mode}]`);
             index += operatorPacket.length;
         }
 
         if (depth === 0 && 0 < bin.length - index && bin.length - index < 11 && bin.substr(index).split('').every(s => s === '0')) {
-            console.debug(`Ignoring padding [${bin.substr(index)}]`);
+            debug(`Ignoring padding [${bin.substr(index)}]`);
             index += bin.substr(index).split('').length;
         }
     }

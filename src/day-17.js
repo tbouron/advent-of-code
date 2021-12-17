@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const debug = require('debug')(path.basename(__filename));
 
 function simulate(xVelocity, yVelocity, target) {
     let success;
@@ -23,8 +24,6 @@ function simulate(xVelocity, yVelocity, target) {
         }
         yVelocity--;
 
-        // console.debug(`----> Simulate [${x}][${y}]`);
-
         if (minTargetX <= x && x <= maxTargetX && minTargetY <= y && maxTargetY >= y) {
             success = true;
         }
@@ -34,7 +33,7 @@ function simulate(xVelocity, yVelocity, target) {
         }
     }
 
-    // console.debug(`----> Simulation ${success ? 'successful' : 'failed'}`);
+    debug(`----> Simulation for velocity x=${xVelocity} y=${yVelocity} ${success ? 'successful' : 'failed'}`);
 
     return {
         success,
@@ -71,10 +70,10 @@ let yVelocity = 80;
 
 let count = 0;
 while (count < 100) {
-    // console.debug(`Tried [${xVelocity}][${yVelocity}]`);
+    debug(`Tried [${xVelocity}][${yVelocity}]`);
     const {success, x, y, highestY} = simulate(xVelocity, yVelocity, target);
     if (success) {
-        // console.debug(`===> Found better one [${xVelocity}][${yVelocity}] with highest Y of ${highestY}`);
+        debug(`===> Found better one [${xVelocity}][${yVelocity}] with highest Y of ${highestY}`);
         if (highestY > maxHeight) {
             maxHeight = highestY;
         }

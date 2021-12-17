@@ -7,7 +7,13 @@
     "puzzles": "node --expose-gc index.js"
   },
   "keywords": [
-    "nodejs", "javascript", "advent-of-code", "advent-of-code-2021"
+    "nodejs",
+    "javascript",
+    "advent-of-code",
+    "advent-of-code-2021"
   ],
-  "author": "Thomas Bouron <tbouron@gmail.com>"
+  "author": "Thomas Bouron <tbouron@gmail.com>",
+  "dependencies": {
+    "debug": "^4.3.3"
+  }
 }

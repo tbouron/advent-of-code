@@ -99,8 +99,7 @@ for (let index in sequence) {
 }
 
 if (winnerBoards.length === 0) {
-    console.log('Urgh, no winner!');
-    return;
+    throw new Error('Urgh, no winner!');
 }
 
 const part1 = winnerBoards[0].entries

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const debug = require('debug')(path.basename(__filename));
 
 function aStar(grid, startNode, endNode, h) {
     let openSet = new Set();
@@ -23,7 +24,7 @@ function aStar(grid, startNode, endNode, h) {
             return current;
         }, null);
 
-        // console.log(`=> Go to [${current.row}] [${current.col}] | Risk ${current.risk} | Score ${gScore.get(current)}`);
+        debug(`=> Go to [${current.row}] [${current.col}] | Risk ${current.risk} | Score ${gScore.get(current)}`);
 
         if (current === endNode) {
             return gScore.get(current);
