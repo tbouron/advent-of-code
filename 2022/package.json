@@ -1,5 +1,5 @@
 {
-  "name": "advent-of-code-2021",
+  "name": "advent-of-code-2022",
   "version": "1.0.0",
   "description": "Pure Javascript/NodeJS implementation of the advent of code 2021 puzzles",
   "main": "index.ts",
@@ -8,9 +8,9 @@
   },
   "keywords": [
     "nodejs",
-    "javascript",
+    "typescript",
     "advent-of-code",
-    "advent-of-code-2021"
+    "advent-of-code-2022"
   ],
   "author": "Thomas Bouron <tbouron@gmail.com>",
   "dependencies": {

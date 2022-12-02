@@ -1,4 +1,4 @@
-# advent-of-code-2021
+# advent-of-code-2022
 
 This folder contains the code for the [Advent of Code 2022](https://adventofcode.com/2022).
 
