@@ -24,13 +24,13 @@ enum GameOutput {
 
 const parsedInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
     .split('\n')
-    .filter(line => line.length > 0);
+    .filter(line => line.length > 0)
+    .map(round => round.trim().split(' ') as Array<keyof typeof Choice>);
 
-const part1 = parsedInput.map(round => {
-    const roundInput = round.trim().split(' ');
+const part1 = parsedInput.map(roundInput => {
 
-    const opponentChoice = Choice[roundInput[0] as keyof typeof Choice];
-    const elfChoice = Choice[roundInput[1] as keyof typeof Choice];
+    const opponentChoice = Choice[roundInput[0]];
+    const elfChoice = Choice[roundInput[1]];
 
     const elfScore = elfChoice.valueOf();
     if (elfChoice === opponentChoice) {
@@ -45,11 +45,10 @@ const part1 = parsedInput.map(round => {
     return elfScore;
 });
 
-const part2 = parsedInput.map(round => {
-    const input = round.trim().split(' ');
+const part2 = parsedInput.map(roundInput => {
 
-    const opponentChoice = Choice[input[0] as keyof typeof Choice];
-    const gameOutput = GameOutput[input[1] as keyof typeof GameOutput];
+    const opponentChoice = Choice[roundInput[0]];
+    const gameOutput = GameOutput[roundInput[1] as keyof typeof GameOutput];
 
     switch (gameOutput) {
         case GameOutput.X:
