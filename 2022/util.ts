@@ -2,6 +2,11 @@ export function sum(arr: Array<number>) {
     return arr.reduce((sum, priorities) => sum + priorities, 0);
 }
 
+export function expandRange(lowBound: number, highBound: number): number[] {
+    let diff = highBound - lowBound;
+    return diff > 0 ? Array(diff + 1).fill(lowBound).map((value, index) => value + index) : [lowBound];
+}
+
 export function intersection(...args: any[][]) {
     Array.from(args).forEach((arg, index) => {
         if (!Array.isArray(arg)) {
