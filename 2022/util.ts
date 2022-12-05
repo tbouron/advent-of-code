@@ -28,3 +28,7 @@ export function intersection(...args: any[][]) {
         .filter(arg => arg !== smallerSet);
     return Array.from(smallerSet).filter(item => sets.every(set => set.has(item)));
 }
+
+export function transpose(matrix: any[][]) {
+    return matrix[0].map((_, c) => matrix.map(r => r[c]));
+}
