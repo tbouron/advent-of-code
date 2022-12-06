@@ -1,5 +1,15 @@
-export function sum(arr: Array<number>) {
+export function sum(arr: number[]) {
     return arr.reduce((sum, priorities) => sum + priorities, 0);
+}
+
+export function hasDuplicateValues(arr: any[]) {
+    return Object.values(arr.reduce((acc, value) => {
+        if (!acc.hasOwnProperty(value)) {
+            acc[value] = 0;
+        }
+        acc[value]++;
+        return acc;
+    }, {} as {[key: string]: number})).every(value => value === 1);
 }
 
 export function expandRange(lowBound: number, highBound: number): number[] {
