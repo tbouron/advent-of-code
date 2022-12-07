@@ -4,7 +4,7 @@
   "description": "Pure Javascript/NodeJS implementation of the advent of code 2021 puzzles",
   "main": "index.ts",
   "scripts": {
-    "puzzles": "ts-node index.ts"
+    "puzzles": "nodemon index.ts"
   },
   "keywords": [
     "nodejs",
@@ -14,6 +14,7 @@
   ],
   "author": "Thomas Bouron <tbouron@gmail.com>",
   "dependencies": {
+    "nodemon": "^2.0.20",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
