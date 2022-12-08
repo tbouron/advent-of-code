@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import {Direction, Matrix} from "../util";
 
 const rawInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
     .trim()
@@ -10,107 +11,75 @@ const rawTestInput = fs.readFileSync(path.join(__dirname, `${path.basename(__fil
     .split('\n')
     .map(line => line.split('').map(digit => parseInt(digit)));
 
-let visibleCounter = rawInput.reduce((totalSum, line, rowIndex, rows) => {
+
+const matrix = new Matrix(rawInput);
+
+let totalVisibleTrees = matrix.get().reduce((totalVisible, line, rowIndex, rows) => {
+    // Top & Bottom row are edges, so trees are always visible
     if (rowIndex === 0 || rowIndex === rows.length - 1) {
-        return totalSum + line.length;
+        return totalVisible + line.length;
     }
 
-    const rowSum = line.reduce((sum, column, columnIndex, columns) => {
+    const visibleTreesInRow = line.reduce((visibleTrees, column, columnIndex, columns) => {
         if (columnIndex === 0 || columnIndex === columns.length - 1) {
-            return sum++;
+            return visibleTrees++;
         }
 
         const neighbours = [
-            // Top trees
-            Array(rowIndex).fill(0).map((v, index) => rows[index][columnIndex]),
-            // Left trees
-            Array(columnIndex).fill(0).map((v, index) => rows[rowIndex][index]),
-            // Right tress
-            Array(columns.length - columnIndex - 1).fill(0).map((v, index) => rows[rowIndex][columnIndex + index + 1]),
-            // Bottom trees
-            Array(rows.length - rowIndex - 1).fill(0).map((v, index) => rows[rowIndex + index + 1][columnIndex]),
-        ]
+            matrix.getItemsFrom(rowIndex, columnIndex, Direction.TOP),
+            matrix.getItemsFrom(rowIndex, columnIndex, Direction.LEFT),
+            matrix.getItemsFrom(rowIndex, columnIndex, Direction.BOTTOM),
+            matrix.getItemsFrom(rowIndex, columnIndex, Direction.RIGHT),
+        ];
         if (neighbours.some(neighbour => neighbour.every(tree => tree < column))) {
-            sum++;
+            visibleTrees++;
         }
 
-        return sum;
+        return visibleTrees;
     }, 0);
 
     // +2 for the 2 edged trees
-    return totalSum + rowSum + 2;
+    return totalVisible + visibleTreesInRow + 2;
 }, 0);
 
-const highestScenicScore = rawInput.reduce((scenicScore, line, rowIndex, rows) => {
+const highestScenicScore = matrix.get().reduce((scenicScore, line, rowIndex, rows) => {
     let highestScenicScoreForRow = 0;
+    // Ignore first and last row, as there is no trees in either top or bottom direction
     if (rowIndex === 0 || rowIndex === rows.length - 1) {
         return scenicScore;
     }
 
-    highestScenicScoreForRow = line.reduce((sc, column, columnIndex, columns) => {
+    highestScenicScoreForRow = line.reduce((scenicScore, column, columnIndex, columns) => {
+        // Ignore first and last column, as there is no trees in either left or right direction
         if (columnIndex === 0 || columnIndex === columns.length - 1) {
-            return sc;
+            return scenicScore;
         }
 
-        let topNonBlockingTrees = 0;
-        let leftNonBlockingTrees = 0;
-        let rightNonBlockingTrees = 0;
-        let bottomNonBlockingTrees = 0;
-        let ci;
+        const topTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.TOP)
+        const leftTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.LEFT);
+        const bottomTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.BOTTOM);
+        const rightTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.RIGHT);
 
-        // Top trees
-        ci = rowIndex - 1;
-        while (ci >= 0) {
-            topNonBlockingTrees++;
-            if (rows[ci][columnIndex] < column) {
-                ci--;
-            } else {
-                break;
-            }
-        }
+        const topNonBlockingTrees = topTrees.findIndex(v => v >= column) > -1
+            ? topTrees.findIndex(v => v >= column) + 1
+            : topTrees.length;
+        const leftNonBlockingTrees = leftTrees.findIndex(v => v >= column) > -1
+            ? leftTrees.findIndex(v => v >= column) + 1
+            : leftTrees.length;
+        const bottomNonBlockingTrees = bottomTrees.findIndex(v => v >= column) > -1
+            ? bottomTrees.findIndex(v => v >= column) + 1
+            : bottomTrees.length;
+        const rightNonBlockingTrees = rightTrees.findIndex(v => v >= column) > -1
+            ? rightTrees.findIndex(v => v >= column) + 1
+            : rightTrees.length;
 
-        // Left trees
-        ci = columnIndex - 1;
-        while (ci >= 0) {
-            leftNonBlockingTrees++;
-            if (columns[ci] < column) {
-                ci--;
-            } else {
-                break;
-            }
-        }
+        const currentScenicScore = topNonBlockingTrees * leftNonBlockingTrees * bottomNonBlockingTrees * rightNonBlockingTrees;
 
-        // Bottom trees
-        ci = rowIndex + 1;
-        while (ci < rows.length) {
-            bottomNonBlockingTrees++;
-            // console.log(`Tree at row=${ci};col=${columnIndex} => ${rows[ci][columnIndex]} (compare to ${column})`);
-            if (rows[ci][columnIndex] < column) {
-                ci++;
-            } else {
-                break;
-            }
-        }
-
-        // Right trees
-        ci = columnIndex + 1;
-        while (ci < columns.length) {
-            rightNonBlockingTrees++;
-            if (columns[ci] < column) {
-                ci++;
-            } else {
-                break;
-            }
-        }
-
-        const currentSc = topNonBlockingTrees * leftNonBlockingTrees * rightNonBlockingTrees * bottomNonBlockingTrees;
-
-        return currentSc > sc ? currentSc : sc;
+        return currentScenicScore > scenicScore ? currentScenicScore : scenicScore;
     }, 0);
 
     return highestScenicScoreForRow > scenicScore ? highestScenicScoreForRow : scenicScore;
 }, 0);
 
-
-export const Part1 = visibleCounter;
+export const Part1 = totalVisibleTrees;
 export const Part2 = highestScenicScore;

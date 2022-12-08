@@ -39,6 +39,53 @@ export function intersection(...args: any[][]) {
     return Array.from(smallerSet).filter(item => sets.every(set => set.has(item)));
 }
 
-export function transpose(matrix: any[][]) {
-    return matrix[0].map((_, c) => matrix.map(r => r[c]));
+export enum Direction {
+    TOP,
+    LEFT,
+    BOTTOM,
+    RIGHT
+}
+
+export class Matrix<T> {
+
+    private readonly matrix: T[][];
+
+    constructor(input: T[][]) {
+        if (!input.every(line => line.length === input[0].length)) {
+            throw new Error('The input matrix must have the same length for every row');
+        }
+        this.matrix = input;
+    }
+
+    get() {
+        return this.matrix;
+    }
+
+    transpose() {
+        return this.matrix[0].map((_, c) => this.matrix.map(r => r[c]));
+    }
+
+    getItemsFrom(row: number, col: number, direction: Direction) {
+        if (row < 0 || row >= this.matrix.length) {
+            throw new Error(`Starting position row "${row}" is out of bound [0, ${this.matrix.length - 1}]`);
+        }
+        if (col < 0 || col >= this.matrix[row].length) {
+            throw new Error(`Starting position col "${col}" is out of bound [0, ${this.matrix[row].length - 1}]`);
+        }
+
+        switch (direction) {
+            case Direction.TOP:
+                return Array(row).fill(0).map((v, index) => this.matrix[index][col]).reverse();
+            case Direction.LEFT:
+                return this.matrix[row].slice(0, col).reverse();
+            case Direction.BOTTOM:
+                return Array(this.matrix.length - 1 - row).fill(0).map((v, index) => this.matrix[row + 1 + index][col]);
+            case Direction.RIGHT:
+                return this.matrix[row].slice(col + 1);
+        }
+    }
+}
+
+export function transpose<T>(matrix: T[][]) {
+    return new Matrix(matrix).transpose();
 }
