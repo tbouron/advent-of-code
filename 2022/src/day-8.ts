@@ -43,37 +43,28 @@ let totalVisibleTrees = matrix.get().reduce((totalVisible, line, rowIndex, rows)
 }, 0);
 
 const highestScenicScore = matrix.get().reduce((scenicScore, line, rowIndex, rows) => {
-    let highestScenicScoreForRow = 0;
     // Ignore first and last row, as there is no trees in either top or bottom direction
     if (rowIndex === 0 || rowIndex === rows.length - 1) {
         return scenicScore;
     }
 
-    highestScenicScoreForRow = line.reduce((scenicScore, column, columnIndex, columns) => {
+    const highestScenicScoreForRow = line.reduce((scenicScore, column, columnIndex, columns) => {
         // Ignore first and last column, as there is no trees in either left or right direction
         if (columnIndex === 0 || columnIndex === columns.length - 1) {
             return scenicScore;
         }
 
-        const topTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.TOP)
-        const leftTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.LEFT);
-        const bottomTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.BOTTOM);
-        const rightTrees = matrix.getItemsFrom(rowIndex, columnIndex, Direction.RIGHT);
-
-        const topNonBlockingTrees = topTrees.findIndex(v => v >= column) > -1
-            ? topTrees.findIndex(v => v >= column) + 1
-            : topTrees.length;
-        const leftNonBlockingTrees = leftTrees.findIndex(v => v >= column) > -1
-            ? leftTrees.findIndex(v => v >= column) + 1
-            : leftTrees.length;
-        const bottomNonBlockingTrees = bottomTrees.findIndex(v => v >= column) > -1
-            ? bottomTrees.findIndex(v => v >= column) + 1
-            : bottomTrees.length;
-        const rightNonBlockingTrees = rightTrees.findIndex(v => v >= column) > -1
-            ? rightTrees.findIndex(v => v >= column) + 1
-            : rightTrees.length;
-
-        const currentScenicScore = topNonBlockingTrees * leftNonBlockingTrees * bottomNonBlockingTrees * rightNonBlockingTrees;
+        const currentScenicScore = [
+            Direction.TOP,
+            Direction.LEFT,
+            Direction.BOTTOM,
+            Direction.RIGHT
+        ].map(direction => {
+            const treesForDirection = matrix.getItemsFrom(rowIndex, columnIndex, direction);
+            return treesForDirection.findIndex(v => v >= column) > -1
+                ? treesForDirection.findIndex(v => v >= column) + 1
+                : treesForDirection.length;
+        }).reduce((acc, blockingTrees) => acc * blockingTrees, 1);
 
         return currentScenicScore > scenicScore ? currentScenicScore : scenicScore;
     }, 0);
