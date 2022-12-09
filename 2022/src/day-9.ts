@@ -34,26 +34,22 @@ function moveKnots(knots: Point[]) {
     for (let ki = 0; ki <= knots.length - 2; ki++) {
         const head = knots[ki];
         const tail = knots[ki + 1];
+
+        const rowOffset = Math.abs(head.row - tail.row);
+        const colOffset = Math.abs(head.col - tail.col);
+
         // Move tail UP or DOWN
-        if (tail.col === head.col && Math.abs(head.row - tail.row) > 1) {
-            tail.row += (head.row - tail.row) / 2;
+        if (tail.col === head.col && rowOffset > 1) {
+            tail.row += (head.row - tail.row) >= 0 ? 1 : -1;
         }
         // Move tail LEFT or RIGHT
-        if (tail.row === head.row && Math.abs(head.col - tail.col) > 1) {
-            tail.col += (head.col - tail.col) / 2;
+        if (tail.row === head.row && colOffset > 1) {
+            tail.col += (head.col - tail.col) >= 0 ? 1 : -1;
         }
         // Move tail diagonally
-        if (Math.abs(head.row - tail.row) === 2 && Math.abs(head.col - tail.col) === 1) {
-            tail.row += (head.row - tail.row) / 2;
-            tail.col = head.col;
-        }
-        if (Math.abs(head.row - tail.row) === 1 && Math.abs(head.col - tail.col) === 2) {
-            tail.row = head.row;
-            tail.col += (head.col - tail.col) / 2;
-        }
-        if (Math.abs(head.row - tail.row) >= 2 && Math.abs(head.col - tail.col) >= 2) {
-            tail.row += (head.row - tail.row) / 2;
-            tail.col += (head.col - tail.col) / 2;
+        if ((rowOffset >= 1 && colOffset > 1) || (rowOffset > 1 && colOffset >= 1)) {
+            tail.row += (head.row - tail.row) >= 0 ? 1 : -1;
+            tail.col += (head.col - tail.col) >= 0 ? 1 : -1;
         }
     }
 }
@@ -61,6 +57,7 @@ function moveKnots(knots: Point[]) {
 function createRope(numberOfKnots: number) {
     return Array(numberOfKnots).fill(0).map(v => Object.assign({}, {row: 0, col: 0}));
 }
+
 function simulateRope(knots: Point[], direction: string, length: number, set: Set<string>) {
     for (let i = 1; i <= length; i++) {
         moveHead(knots, direction);
