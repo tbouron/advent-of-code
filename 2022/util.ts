@@ -1,5 +1,9 @@
 export function sum(arr: number[]) {
-    return arr.reduce((sum, priorities) => sum + priorities, 0);
+    return arr.reduce((sum, value) => sum + value, 0);
+}
+
+export function multiply(arr: number[]) {
+    return arr.reduce((acc, value) => acc * value, 1);
 }
 
 export function hasDuplicateValues(arr: any[]) {
