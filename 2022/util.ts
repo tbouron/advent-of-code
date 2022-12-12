@@ -93,3 +93,62 @@ export class Matrix<T> {
 export function transpose<T>(matrix: T[][]) {
     return new Matrix(matrix).transpose();
 }
+
+export function dijkstra<T>(graph: {[key: string]: {[key: string]: number}}, startNode: string, endNode: string) {
+    let shortestDistanceNode = (distances: {[key: string]: number}, visited: string[]) => {
+        return Object.entries(distances).reduce((shortestNode: string | null, entry) => {
+            let foundShortest = shortestNode === null || distances[entry[0]] < distances[shortestNode];
+            if (foundShortest && !visited.includes(entry[0])) {
+                shortestNode = entry[0];
+            }
+            return shortestNode;
+        }, null);
+    };
+
+    let distances: {[key: string]: number} = {};
+    distances[endNode] = Number.MAX_VALUE;
+    distances = Object.assign(distances, graph[startNode]);
+    let parents: {[key: string]: string} = {};
+    for (let child in graph[startNode]) {
+        parents[child] = startNode;
+    }
+
+    let visited: string[] = [];
+    let node = shortestDistanceNode(distances, visited);
+
+    while (node) {
+        let distance = distances[node];
+        let children = graph[node];
+
+        for (let child in children) {
+            if (child === startNode) {
+                continue;
+            } else {
+                let totalDistanceToChild = distance + children[child];
+                if (!distances[child] || distances[child] > totalDistanceToChild) {
+                    distances[child] = totalDistanceToChild;
+                    parents[child] = node;
+                }
+            }
+        }
+        visited.push(node);
+        node = shortestDistanceNode(distances, visited);
+    }
+
+    let shortestPath = [];
+    let parent = parents[endNode];
+    if (parent) {
+        shortestPath.push(endNode);
+    }
+    while (parent) {
+        shortestPath.push(parent);
+        parent = parents[parent];
+    }
+    shortestPath.reverse();
+
+    return {
+        distance: distances[endNode],
+        path: shortestPath,
+    };
+}
+
