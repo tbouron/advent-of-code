@@ -16,6 +16,7 @@ function parsePackets(rawData: string) {
             .split('\n')
             .map(item => JSON.parse(item.trim())));
 }
+
 function isInRightOrder(left: number | any[], right: number | any[]): number {
     debug(`Compare ${JSON.stringify(left)} vs ${JSON.stringify(right)}`);
     if (typeof left === 'number' && typeof right === 'number') {
@@ -52,7 +53,7 @@ function isInRightOrder(left: number | any[], right: number | any[]): number {
 
 const packets = parsePackets(rawInput);
 
-const part1 = packets.reduce((indexes, pair, index, pairs) => {
+const part1 = packets.reduce((indexes, pair, index) => {
     debug(`==== Pair ${index + 1}`);
     let number = isInRightOrder(pair[0], pair[1]);
     debug(`${number < 0 ? 'Left' : 'Right'} side is smalled, so inputs are ${number < 0 ? 'in the right order' : 'not in the right order'}`);
@@ -65,8 +66,8 @@ const part1 = packets.reduce((indexes, pair, index, pairs) => {
 export const Part1 = sum(part1);
 
 const part2 = packets.flatMap(p => p);
-part2.push([[2]]);
-part2.push([[6]]);
+const decoderKeys = [[[2]], [[6]]];
+part2.push(...decoderKeys);
 part2.sort((a, b) => isInRightOrder(a, b));
 
-export const Part2 = multiply(['[[2]]', '[[6]]'].map(decoderKey => part2.findIndex(p => JSON.stringify(p) === decoderKey) + 1));
+export const Part2 = multiply(decoderKeys.map(decoderKey => part2.findIndex(p => JSON.stringify(p) === JSON.stringify(decoderKey)) + 1));

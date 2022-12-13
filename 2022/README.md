@@ -24,6 +24,15 @@ DAY=2 npm run puzzles
 DAY=2 ts-node index.ts
 ```
 
+If you want to see the debug logs, you can use the envvar `DEBUG` like so:
+```bash
+DEBUG=* npm run puzzle # Will output ALL debug logs
+
+*OR*
+
+DEBUG=day-1.ts,day-2.ts,day-3.ts npm run puzzle # Will output the debug logs only for day 1, 2 and 3
+```
+
 _Note that the runner will output the time & memory consumption for each day._
 
 ## How to add days?
