@@ -14,10 +14,12 @@
   ],
   "author": "Thomas Bouron <tbouron@gmail.com>",
   "dependencies": {
+    "debug": "^4.3.4",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.7",
     "@types/node": "^18.11.10"
   }
 }
