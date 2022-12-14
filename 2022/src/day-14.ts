@@ -48,16 +48,18 @@ function parseInput(rawInput: string) {
             }, [] as Point[])));
 }
 
-function simulate(points: Point[], [sandSourceRow, sandSourceCol]: number[], infiniteVoid: boolean = true) {
+function simulate(points: Point[], source: number[], infiniteVoid: boolean = true) {
     const rows = points.map(({row}) => row);
     const cols = points.map(({col}) => col);
     const minCols = Math.min(...cols);
     const maxRows = Math.max(...rows);
     const maxCols = Math.max(...cols);
-    let simulating = true;
 
-    let grain = [sandSourceRow, sandSourceCol];
-    while (simulating) {
+    const grainsQueue = [source];
+
+    while (grainsQueue.length > 0) {
+        let grain = grainsQueue[grainsQueue.length - 1];
+
         // Check if the DOWN neighbour is blocking
         if (points.some(({row, col}) => row === grain[0] + 1 && col === grain[1]) || (!infiniteVoid && grain[0] === maxRows + 1)) {
             // Check if the DOWN-LEFT neighbour is blocking
@@ -65,57 +67,45 @@ function simulate(points: Point[], [sandSourceRow, sandSourceCol]: number[], inf
                 // Check if the DOWN-RIGHT neighbour is blocking
                 if (points.some(({row, col}) => row === grain[0] + 1 && col === grain[1] + 1) || (!infiniteVoid && grain[0] === maxRows + 1)) {
                     debug(`Grain reached final destination at [${grain[0]} ${grain[1]}]`);
+                    // debug(`Last good grain vs grain: [${lastGoodGrain}] vs [${grain}]`);
                     points.push({
                         type: 'o',
                         row: grain[0],
                         col: grain[1]
                     });
-                    // Reset
-                    grain = [sandSourceRow, sandSourceCol];
+                    // Reset to last known good position
+                    grainsQueue.pop();
                 } else {
                     // Otherwise, move diagonally to DOWN-RIGHT
-                    grain[0]++;
-                    grain[1]++;
-                    debug(`Going going to [${grain[0]} ${grain[1]}]`);
+                    grainsQueue.push([grain[0] + 1, grain[1] + 1]);
                 }
             } else {
                 // Otherwise, move diagonally to DOWN-LEFT
-                grain[0]++;
-                grain[1]--;
-                debug(`Going going to [${grain[0]} ${grain[1]}]`);
+                grainsQueue.push([grain[0] + 1, grain[1] - 1]);
             }
         } else {
             // Otherwise, move DOWN
-            grain[0]++;
-            debug(`Going going to [${grain[0]} ${grain[1]}]`);
+            grainsQueue.push([grain[0] + 1, grain[1]]);
         }
 
         // If the grain falls outside our matrix of blocking points
         if (infiniteVoid) {
             if (grain[0] > maxRows) {
-                simulating = false;
+                grainsQueue.length = 0;
             }
             if (grain[1] < minCols || grain[1] > maxCols) {
-                simulating = false;
+                grainsQueue.length = 0;
             }
-        }
-
-        // If the last grain is the source
-        const lastGrain = points[points.length - 1];
-        if (lastGrain && lastGrain.row === sandSourceRow && lastGrain.col === sandSourceCol) {
-            simulating = false;
         }
     }
 
     return points;
 }
 
-const blockingPoints = parseInput(rawTestInput);
+const blockingPoints = parseInput(rawInput);
 
 const blockingPointForInfiniteVoid = simulate(Array.from(blockingPoints), [0, 500], true);
 export const Part1 = blockingPointForInfiniteVoid.filter(p => p.type === 'o').length;
 
 const blockingPointForCave = simulate(blockingPointForInfiniteVoid, [0, 500], false);
-export const Part2 = blockingPointForCave.filter(p => p.type === 'o').length;
-
-
+export const Part2 = blockingPointForCave.filter(p => p.type === 'o').length
