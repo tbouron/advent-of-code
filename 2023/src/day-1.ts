@@ -33,6 +33,9 @@ const part2 = parsedInput.map((line, index) => {
         ['eight', 8],
         ['nine', 9],
     ];
+    // Notice the `?=` at the start of the regex for a lookahead and not consuming the buffer. This is necessary otherwise
+    // the overlapping pattern won't be found. For instance, with an input of `sevenine`, a normal regex would match only
+    // `seven` whereas we want to match `seven` and `nine`
     const digits = Array.from(line.matchAll(new RegExp(`(?=([0-9]|${replacements.map(r => r[0]).join('|')}))`, 'g')))
         .map(match => {
             const value = parseInt(match[1]);
