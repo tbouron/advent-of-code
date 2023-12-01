@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {Direction, Matrix} from "../util";
+import {Direction, Matrix} from "../../util";
 
 const rawInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
     .trim()

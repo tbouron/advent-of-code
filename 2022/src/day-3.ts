@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {intersection, sum} from "../util";
+import {intersection, sum} from "../../util";
 
 const priorities = [
     'a',

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Debug from 'debug'
-import {multiply, sum} from "../util";
+import {multiply, sum} from "../../util";
 import {performance} from "perf_hooks";
 
 type Point = {

@@ -1,7 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import {sum} from '../../util';
 
-const parsedInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
+const rawInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
+    .trim()
+    .split('\n')
+    .filter(line => line.trim() !== '');
+const rawTestInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.test.txt`), 'utf8')
+    .trim()
     .split('\n')
     .filter(line => line.trim() !== '');
 
@@ -16,12 +22,12 @@ const computeCalibrationNumber = (digits: number[]) => {
     }
 }
 
-const part1 = parsedInput.map(line => {
+const part1 = rawInput.map(line => {
     const digits = Array.from(line.matchAll(/[0-9]/g)).map(match => parseInt(match[0]));
     return computeCalibrationNumber(digits);
 });
 
-const part2 = parsedInput.map((line, index) => {
+const part2 = rawInput.map((line, index) => {
     let replacements = [
         ['one', 1],
         ['two', 2],
@@ -47,7 +53,5 @@ const part2 = parsedInput.map((line, index) => {
     return computeCalibrationNumber(digits);
 });
 
-export const Part1 = `The sum of all calibration number is: ${part1.reduce((sum, n) => sum + n, 0)}`;
-export const Part2 = `The sum of all calibration number, including text ones, is: ${part2.reduce((sum, n) => sum + n, 0)}`;
-
-
+export const Part1 = sum(part1);
+export const Part2 = sum(part2);

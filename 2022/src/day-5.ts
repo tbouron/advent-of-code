@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {transpose} from "../util";
+import {transpose} from "../../util";
 
 const instructionRegex = /^move ([0-9]+) from ([0-9]+) to ([0-9]+)$/
 

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {multiply} from "../util";
+import {multiply} from "../../util";
 
 enum Operator {
     PLUS,

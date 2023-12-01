@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Debug from 'debug'
-import {multiply, sum} from "../util";
+import {multiply, sum} from "../../util";
 
 const debug = Debug(__filename);
 const rawInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')

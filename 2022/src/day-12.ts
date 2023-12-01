@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {dijkstra, multiply} from "../util";
+import {dijkstra, multiply} from "../../util";
 
 const rawInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
     .trim();

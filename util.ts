@@ -6,7 +6,7 @@ export function multiply(arr: number[]) {
     return arr.reduce((acc, value) => acc * value, 1);
 }
 
-export function hasDuplicateValues(arr: any[]) {
+export function hasDuplicateValues(arr: string[]) {
     return Object.values(arr.reduce((acc, value) => {
         if (!acc.hasOwnProperty(value)) {
             acc[value] = 0;
@@ -21,14 +21,14 @@ export function expandRange(lowBound: number, highBound: number): number[] {
     return diff > 0 ? Array(diff + 1).fill(lowBound).map((value, index) => value + index) : [lowBound];
 }
 
-export function intersection(...args: any[][]) {
+export function intersection<T>(...args: T[][]) {
     Array.from(args).forEach((arg, index) => {
         if (!Array.isArray(arg)) {
             throw new Error(`Argument #${index + 1} must be an array. Got: ${arg}`);
         }
     });
 
-    const smallerSet = new Set(Array.from(args).reduce((s: any[] | null, arg: any[]) => {
+    const smallerSet = new Set(Array.from(args).reduce((s: T[] | null, arg: T[]) => {
         if (s === null) {
             return arg;
         }

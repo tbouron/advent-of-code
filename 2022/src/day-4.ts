@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {expandRange, intersection} from "../util";
+import {expandRange, intersection} from "../../util";
 
 const parsedInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
     .split('\n')
