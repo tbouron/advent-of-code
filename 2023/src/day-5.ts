@@ -65,6 +65,8 @@ const part1 = initialSeeds
     .map(initialSeed => mappings.reduce((source, mapping) => calculateTranslation(source, mapping), initialSeed))
     .reduce((min, destination) => Math.min(min, destination), Number.MAX_VALUE);
 
+// TODO: To speed up part 2: get the range and transform them as previously since the transformation is stable
+//       Then, identify every overlapped ranges and split them up. The lower start range index is the answer!
 const part2 = initialSeeds.reduce((min, initialSeed, initialSeedIndex, initialSeeds) => {
     if (initialSeedIndex%2 === 0) {
         return min;
