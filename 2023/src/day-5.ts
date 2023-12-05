@@ -27,14 +27,13 @@ type Mapping = {
 // of one of our mapping. If that is the case, we simply calculate the offset + `destination`. Otherwise, we return the
 // `source`
 const calculateTranslation = (source: number, mappings: Mapping[]) => {
-    const foundDestination = mappings.reduce((destination: number | null, mapping) => {
+    for (let index = 0; index < mappings.length; index++) {
+        const mapping = mappings[index];
         if (mapping.source <= source && source <= mapping.source + mapping.range - 1) {
             return mapping.destination + source - mapping.source;
         }
-        return destination;
-    }, null);
-
-    return foundDestination || source;
+    }
+    return source;
 }
 
 const initialSeeds = rawInput.shift()!
@@ -62,13 +61,9 @@ const mappings = rawInput.reduce((o, line) => {
     return o;
 }, [] as Mapping[][]);
 
-const part1 = initialSeeds.map(initialSeed => {
-    let destination= initialSeed;
-    mappings.forEach(mapping => {
-        destination = calculateTranslation(destination, mapping);
-    });
-    return destination;
-}).reduce((min, destination) => Math.min(min, destination), Number.MAX_VALUE);
+const part1 = initialSeeds
+    .map(initialSeed => mappings.reduce((source, mapping) => calculateTranslation(source, mapping), initialSeed))
+    .reduce((min, destination) => Math.min(min, destination), Number.MAX_VALUE);
 
 const part2 = initialSeeds.reduce((min, initialSeed, initialSeedIndex, initialSeeds) => {
     if (initialSeedIndex%2 === 0) {
@@ -77,10 +72,7 @@ const part2 = initialSeeds.reduce((min, initialSeed, initialSeedIndex, initialSe
     const startRange = initialSeeds[initialSeedIndex - 1];
     const endRange = initialSeeds[initialSeedIndex - 1] + initialSeed;
     for (let i = startRange; i < endRange; i++) {
-        let destination = i;
-        mappings.forEach(mapping => {
-            destination = calculateTranslation(destination, mapping);
-        });
+        const destination = mappings.reduce((source, mapping) => calculateTranslation(source, mapping), i);
         min = Math.min(min, destination);
     }
     return min;
