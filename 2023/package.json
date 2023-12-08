@@ -21,5 +21,12 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/node": "^18.11.10"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "*.*",
+      "../util.ts"
+    ],
+    "ext": "ts,json,txt"
   }
 }
