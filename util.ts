@@ -6,6 +6,12 @@ export function multiply(arr: number[]) {
     return arr.reduce((acc, value) => acc * value, 1);
 }
 
+export function lcm(range: number[]) {
+    const gcd = (x: number, y: number): number => (!y ? x : gcd(y, x % y));
+    const _lcm = (x: number, y: number): number => (x * y) / gcd(x, y);
+    return range.reduce((a, b) => _lcm(a, b));
+}
+
 export function hasDuplicateValues(arr: string[]) {
     return Object.values(arr.reduce((acc, value) => {
         if (!acc.hasOwnProperty(value)) {
