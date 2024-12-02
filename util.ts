@@ -49,6 +49,19 @@ export function intersection<T>(...args: T[][]) {
     return Array.from(smallerSet).filter(item => sets.every(set => set.has(item)));
 }
 
+export function union<T>(...args: T[][]) {
+    Array.from(args).forEach((arg, index) => {
+        if (!Array.isArray(arg)) {
+            throw new Error(`Argument #${index + 1} must be an array. Got: ${arg}`);
+        }
+    });
+
+    return Array.from(Array.from(args).reduce((acc, a) => {
+        a.forEach(v => acc.add(v));
+        return acc;
+    }, new Set()));
+}
+
 export enum Direction {
     TOP,
     LEFT,
