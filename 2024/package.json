@@ -1,7 +1,7 @@
 {
-  "name": "advent-of-code-2023",
+  "name": "advent-of-code-2024",
   "version": "1.0.0",
-  "description": "Pure Javascript/NodeJS implementation of the advent of code 2023 puzzles",
+  "description": "Pure Javascript/NodeJS implementation of the advent of code 2024 puzzles",
   "main": "index.ts",
   "scripts": {
     "puzzles": "nodemon index.ts"
@@ -10,7 +10,7 @@
     "nodejs",
     "typescript",
     "advent-of-code",
-    "advent-of-code-2023"
+    "advent-of-code-2024"
   ],
   "author": "Thomas Bouron <tbouron@gmail.com>",
   "dependencies": {
