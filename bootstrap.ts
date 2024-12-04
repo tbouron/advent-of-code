@@ -19,9 +19,9 @@ if (errors.length > 0) {
 }
 
 const baseUrl = `https://adventofcode.com/${process.env.YEAR}/day/${process.env.DAY}`;
-const basePath = path.join(__dirname, `../${process.env.YEAR}`);
+const basePath = path.join(__dirname, `${process.env.YEAR}`);
 const inputFilePath = path.join(basePath, `day-${process.env.DAY}.txt`);
-const testInputFilePath = path.join(basePath, `day-${process.env.DAY}.test.txt`);
+const testInputFilePath = path.join(basePath, `day-${process.env.DAY}.test.[index].txt`);
 
 if (!fs.existsSync(basePath)) {
     fs.mkdirSync(basePath);
@@ -44,21 +44,26 @@ if (!fs.existsSync(inputFilePath)) {
     console.log('Input data already fetched => Skipping')
 }
 
-if (!fs.existsSync(testInputFilePath)) {
-    axios.get<string>(baseUrl).then(response => {
-        let dom = new jsdom.JSDOM(response.data);
-        let htmlElement = dom.window.document.querySelector("code");
-        if (htmlElement === null) {
-            throw new Error('Input test data not found!');
+axios.get<string>(baseUrl).then(response => {
+    let dom = new jsdom.JSDOM(response.data);
+    let htmlElements = dom.window.document.querySelectorAll("pre > code");
+    if (htmlElements.length === 0) {
+        throw new Error('Input test data not found!');
+    }
+    htmlElements.forEach((htmlElement, index) => {
+        const fileName = testInputFilePath.replace('[index]', `${index + 1}`);
+        if (!fs.existsSync(fileName)) {
+            fs.writeFileSync(fileName, htmlElement.textContent ?? '');
+        } else {
+            console.log(`Test input data #${index + 1} already fetched => Skipping`);
         }
-        fs.writeFileSync(testInputFilePath, htmlElement.textContent ?? '');
-        console.log(`Test input data written in ${testInputFilePath}`);
-    }).catch(error => {
-        throw new Error(`Failed to get or write test input data: ${error.message}`);
+        console.log(`Test input data #${index + 1} written in ${fileName}`);
     });
-} else {
-    console.log('Test input data already fetched => Skipping');
-}
+}).catch(error => {
+    throw new Error(`Failed to get or write test input data: ${error.message}`);
+});
+
+
 
 
 
