@@ -1,0 +1,40 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "Pure Javascript/NodeJS implementation of the advent of code puzzles",
+  "main": "index.ts",
+  "scripts": {
+    "puzzles": "nodemon index.ts",
+    "bootstrap": "ts-node bootstrap.ts"
+  },
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "advent-of-code",
+    "advent-of-code-2021",
+    "advent-of-code-2022",
+    "advent-of-code-2023",
+    "advent-of-code-2024"
+  ],
+  "author": "Thomas Bouron <tbouron@gmail.com>",
+  "dependencies": {
+    "debug": "^4.3.7",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.10.1",
+    "axios": "^1.7.8",
+    "dotenv": "^16.4.6",
+    "jsdom": "^25.0.1"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "*.*",
+      "../util.ts"
+    ],
+    "ext": "ts,json,txt"
+  }
+}

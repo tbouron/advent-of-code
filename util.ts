@@ -1,6 +1,6 @@
-// import * as path from 'path';
-//
-// const debug = require('debug')(path.basename(__filename));
+import * as path from 'path';
+
+const debug = require('debug')(path.basename(__filename));
 
 export function sum(arr: number[]) {
     return arr.reduce((sum, value) => sum + value, 0);
@@ -203,7 +203,7 @@ export class Matrix<T> {
                     .map(direction => {
                         const items = this.getItemsFrom(row, col, direction)
                         if (items.join('').startsWith(search)) {
-                            console.debug(`Found candidate at row ${row} | col ${col} | direction ${direction} => ${items.join('')}`);
+                            debug(`Found candidate at row ${row} | col ${col} | direction ${direction} => ${items.join('')}`);
                             return items;
                         }
                         return null;
