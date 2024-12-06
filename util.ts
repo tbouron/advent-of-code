@@ -1,4 +1,5 @@
 import * as path from 'path';
+import {it} from "node:test";
 
 const debug = require('debug')(path.basename(__filename));
 
@@ -85,7 +86,7 @@ export class Matrix<T> {
         if (!input.every(line => line.length === input[0].length)) {
             throw new Error('The input matrix must have the same length for every row');
         }
-        this.matrix = input;
+        this.matrix = structuredClone(input);
     }
 
     get() {
@@ -100,6 +101,12 @@ export class Matrix<T> {
         this.validate(row, col);
 
         return this.matrix[row][col];
+    }
+
+    setItemFor(item: T, row: number, col: number) {
+        this.validate(row, col);
+
+        this.matrix[row][col] = item;
     }
 
     getItemsFrom(row: number, col: number, direction: Direction) {
@@ -145,6 +152,21 @@ export class Matrix<T> {
                     }).filter(v => v !== null);
             case Direction.RIGHT:
                 return this.matrix[row].slice(col);
+        }
+    }
+
+    searchFirstItem(items: string[]) {
+        for (let row = 0; row < this.matrix.length; row++) {
+            for (let col = 0; col < this.matrix[row].length; col++) {
+                const itemFor = this.getItemFor(row, col);
+                if (items.some(i => i === itemFor)) {
+                    return {
+                        row,
+                        col,
+                        item: itemFor
+                    }
+                }
+            }
         }
     }
 
