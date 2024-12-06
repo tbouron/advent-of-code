@@ -22,7 +22,7 @@ const directionMapping: {[key: string]: Direction} = {
     '>': Direction.RIGHT
 };
 
-const walkUntilOut = (matrix: Matrix<string>) => {
+const walk = (matrix: Matrix<string>) => {
     const startPosition = matrix.searchFirstItem(Object.keys(directionMapping));
 
     if (!startPosition) {
@@ -40,6 +40,7 @@ const walkUntilOut = (matrix: Matrix<string>) => {
 
     while(true) {
         if (positionsWithDirections.has(JSON.stringify({row, col, direction}))) {
+            debug('Guard is in a infinite loop!');
             isLoop = true;
             break;
         }
@@ -91,7 +92,7 @@ const walkUntilOut = (matrix: Matrix<string>) => {
 }
 
 const matrix = new Matrix(rawInput);
-const {positions, startPosition} = walkUntilOut(matrix);
+const {positions, startPosition} = walk(matrix);
 
 export const Part1 = positions.size;
 export const Part2 = sum(Array.from(positions)
@@ -105,10 +106,10 @@ export const Part2 = sum(Array.from(positions)
         const newMatrix = new Matrix(matrix.get());
         newMatrix.setItemFor('#', p.row, p.col);
 
-        const {isLoop} = walkUntilOut(newMatrix);
+        const {isLoop} = walk(newMatrix);
 
         if (isLoop) {
-            debug(`Loops found at position row ${p.row} | col ${p.col}!`);
+            debug(`Loop found at position row ${p.row} | col ${p.col}!`);
             return 1;
         }
         return 0;
