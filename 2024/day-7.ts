@@ -21,10 +21,17 @@ const concatOperators = [
 ];
 
 const calcOperator = (sum: number, a: number, b: number, remaining: number[], operators: string[]): boolean => {
-    const possibleSolutions = operators.map(op => eval(op === '||'
-        ? `${a}${b}`
-        : `${a} ${op} ${b}`
-    ) as number);
+    const possibleSolutions = operators.map(op => {
+        if (op === '+') {
+            return a + b;
+        } else if (op === '*') {
+            return a * b;
+        } else if (op === '||') {
+            return parseInt(`${a}${b}`);
+        } else {
+            throw new Error(`Operator ${op} not supported`);
+        }
+    });
 
     if (remaining.length === 0) {
         return possibleSolutions.some(ps => {
