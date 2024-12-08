@@ -170,6 +170,22 @@ export class Matrix<T> {
         }
     }
 
+    search(pattern: string) {
+        const map: {[key: string]: {row: number, col: number}[]} = {};
+        for (let row = 0; row < this.matrix.length; row++) {
+            for (let col = 0; col < this.matrix[row].length; col++) {
+                const itemFor = this.getItemFor(row, col) as string;
+                if (itemFor.match(pattern)) {
+                    if (!map.hasOwnProperty(itemFor)) {
+                        map[itemFor] = [];
+                    }
+                    map[itemFor].push({row, col});
+                }
+            }
+        }
+        return map;
+    }
+
     searchWord(search: string, directionsToSearch?: Direction[]) {
         if (search?.length === 0) {
             throw new Error('Search string must not be empty');
