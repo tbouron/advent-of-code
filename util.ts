@@ -99,16 +99,16 @@ export class Matrix<T> {
         return this.matrix[0].map((_, c) => this.matrix.map(r => r[c]));
     }
 
-    getItemFor(row: number, col: number) {
-        this.validate(row, col);
+    getItemFor(position: Position) {
+        this.validate(position);
 
-        return this.matrix[row][col];
+        return this.matrix[position.row][position.col];
     }
 
-    setItemFor(item: T, row: number, col: number) {
-        this.validate(row, col);
+    setItemFor(position: Position, item: T) {
+        this.validate(position);
 
-        this.matrix[row][col] = item;
+        this.matrix[position.row][position.col] = item;
     }
 
     getAdjacentItemsOf(position: Position, directions: Direction[]) {
@@ -142,7 +142,7 @@ export class Matrix<T> {
             }
 
             try {
-                const valueFor = this.getItemFor(nextPosition.row, nextPosition.col);
+                const valueFor = this.getItemFor(nextPosition);
                 return {
                     position: nextPosition,
                     value: valueFor
@@ -153,56 +153,56 @@ export class Matrix<T> {
         }).filter(item => item !== null) as {position: Position, value: T}[];
     }
 
-    getItemsFrom(row: number, col: number, direction: Direction) {
-        this.validate(row, col);
+    getItemsFrom(position: Position, direction: Direction) {
+        this.validate(position);
 
         switch (direction) {
             case Direction.TOP:
-                return Array(row + 1).fill(row)
-                    .map((v, index) => v - index > -1 ? this.matrix[v - index][col] : null)
+                return Array(position.row + 1).fill(position.row)
+                    .map((v, index) => v - index > -1 ? this.matrix[v - index][position.col] : null)
                     .filter(v => v !== null);
             case Direction.TOP_LEFT:
-                return Array(row + 1).fill(row)
+                return Array(position.row + 1).fill(position.row)
                     .map((v, index) => {
-                        const ret = col > -1 || v - index > -1 ? this.matrix[v - index][col] : null;
-                        col--;
+                        const ret = position.col > -1 || v - index > -1 ? this.matrix[v - index][position.col] : null;
+                        position.col--;
                         return ret;
                     }).filter(v => v !== null);
             case Direction.TOP_RIGHT:
-                return Array(row + 1).fill(row)
+                return Array(position.row + 1).fill(position.row)
                     .map((v, index) => {
-                        const ret = col < this.matrix[v - index].length || v - index > -1 ? this.matrix[v - index][col] : null;
-                        col++;
+                        const ret = position.col < this.matrix[v - index].length || v - index > -1 ? this.matrix[v - index][position.col] : null;
+                        position.col++;
                         return ret;
                     }).filter(v => v !== null);
             case Direction.LEFT:
-                return this.matrix[row].slice(0, col + 1).reverse();
+                return this.matrix[position.row].slice(0, position.col + 1).reverse();
             case Direction.BOTTOM:
-                return Array(this.matrix.length - row).fill(row)
-                    .map((v, index) => this.matrix[v + index][col]);
+                return Array(this.matrix.length - position.row).fill(position.row)
+                    .map((v, index) => this.matrix[v + index][position.col]);
             case Direction.BOTTOM_LEFT:
-                return Array(this.matrix.length - row).fill(row)
+                return Array(this.matrix.length - position.row).fill(position.row)
                     .map((v, index) => {
-                        const ret = col > -1 || v + index >= this.matrix.length ? this.matrix[v + index][col] : null;
-                        col--;
+                        const ret = position.col > -1 || v + index >= this.matrix.length ? this.matrix[v + index][position.col] : null;
+                        position.col--;
                         return ret;
                     }).filter(v => v !== null);
             case Direction.BOTTOM_RIGHT:
-                return Array(this.matrix.length - row).fill(row)
+                return Array(this.matrix.length - position.row).fill(position.row)
                     .map((v, index) => {
-                        const ret = col < this.matrix[v + index].length || v + index >= this.matrix.length ? this.matrix[v + index][col] : null;
-                        col++;
+                        const ret = position.col < this.matrix[v + index].length || v + index >= this.matrix.length ? this.matrix[v + index][position.col] : null;
+                        position.col++;
                         return ret;
                     }).filter(v => v !== null);
             case Direction.RIGHT:
-                return this.matrix[row].slice(col);
+                return this.matrix[position.row].slice(position.col);
         }
     }
 
     searchFirstItem(items: string[]) {
         for (let row = 0; row < this.matrix.length; row++) {
             for (let col = 0; col < this.matrix[row].length; col++) {
-                const itemFor = this.getItemFor(row, col);
+                const itemFor = this.getItemFor({row, col});
                 if (items.some(i => i === itemFor)) {
                     return {
                         row,
@@ -218,7 +218,7 @@ export class Matrix<T> {
         const map: {[key: string]: Position[]} = {};
         for (let row = 0; row < this.matrix.length; row++) {
             for (let col = 0; col < this.matrix[row].length; col++) {
-                const itemFor = this.getItemFor(row, col) as string;
+                const itemFor = this.getItemFor({row, col}) as string;
                 if (itemFor.match(pattern)) {
                     if (!map.hasOwnProperty(itemFor)) {
                         map[itemFor] = [];
@@ -251,7 +251,7 @@ export class Matrix<T> {
         const matches = [];
         for (let row = 0; row < this.matrix.length; row++) {
             for (let col = 0; col < this.matrix[row].length; col++) {
-                if (this.getItemFor(row, col) !== search.charAt(0)) {
+                if (this.getItemFor({row, col}) !== search.charAt(0)) {
                     continue;
                 }
                 let possibleDirections = [];
@@ -283,7 +283,7 @@ export class Matrix<T> {
                 matches.push(...possibleDirections
                     .filter(possibleDirection => directionsToSearch?.includes(possibleDirection))
                     .map(direction => {
-                        const items = this.getItemsFrom(row, col, direction)
+                        const items = this.getItemsFrom({row, col}, direction)
                         if (items.join('').startsWith(search)) {
                             debug(`Found candidate at row ${row} | col ${col} | direction ${direction} => ${items.join('')}`);
                             return items;
@@ -297,12 +297,12 @@ export class Matrix<T> {
         return matches;
     }
 
-    validate(row: number, col: number) {
-        if (row < 0 || row >= this.matrix.length) {
-            throw new Error(`Starting position row "${row}" is out of bound [0, ${this.matrix.length - 1}]`);
+    validate(position: Position) {
+        if (position.row < 0 || position.row >= this.matrix.length) {
+            throw new Error(`Starting position row "${position.row}" is out of bound [0, ${this.matrix.length - 1}]`);
         }
-        if (col < 0 || col >= this.matrix[row].length) {
-            throw new Error(`Starting position col "${col}" is out of bound [0, ${this.matrix[row].length - 1}]`);
+        if (position.col < 0 || position.col >= this.matrix[position.row].length) {
+            throw new Error(`Starting position position.col "${position.col}" is out of bound [0, ${this.matrix[position.row].length - 1}]`);
         }
     }
 }

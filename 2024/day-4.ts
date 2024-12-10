@@ -17,41 +17,32 @@ const rawTestInput = fs.readFileSync(path.join(__dirname, `${path.basename(__fil
 
 // console.log(rawTestInput);
 
-const matrix = new Matrix(rawInput);
+const matrix = new Matrix<string>(rawInput);
 const part1Search = 'XMAS';
 
 export const Part1 = matrix.searchWord(part1Search).length;
 
-let part2 = 0;
-for (let row = 0; row < matrix.get().length; row++) {
-    for (let col = 0; col < matrix.get()[row].length; col++) {
-        if (matrix.getItemFor(row, col) !== 'A') {
-            continue;
-        }
+const search = matrix.search('A');
+export const Part2 = search['A']?.filter(position => {
+    const xLetters = matrix.getAdjacentItemsOf(position, [
+        Direction.TOP_LEFT,
+        Direction.TOP_RIGHT,
+        Direction.BOTTOM_RIGHT,
+        Direction.BOTTOM_LEFT
+    ]).map(item => item.value);
 
-        try {
-            const xLetters = [
-                matrix.getItemFor(row - 1, col - 1),
-                matrix.getItemFor(row - 1, col + 1),
-                matrix.getItemFor(row + 1, col + 1),
-                matrix.getItemFor(row + 1, col - 1)
-            ];
+    const containsRightLetters = xLetters.filter(l => l === 'M').length === 2 && xLetters.filter(l => l === 'S').length === 2;
+    const formX = xLetters.reduce((isX, letter, index, xLetters) => {
+        return index > 0
+            ? isX || xLetters[index - 1] === letter
+            : isX
+    }, false);
 
-            const containsRightLetters = xLetters.filter(l => l === 'M').length === 2 && xLetters.filter(l => l === 'S').length === 2;
-            const formX = xLetters.reduce((isX, letter, index, xLetters) => {
-                return index > 0
-                    ? isX || xLetters[index - 1] === letter
-                    : isX
-            }, false);
-
-            if (containsRightLetters && formX) {
-                debug(`Found an X-MAS at row ${row} | col ${col}`);
-                part2++;
-            }
-        } catch (e) {
-            debug(`Could not get the all letters to form an X at row ${row} | col ${col} => Skipping`);
-        }
+    if (containsRightLetters && formX) {
+        debug(`Found an X-MAS at row ${position.row} | col ${position.col}`);
+        return true;
+    } else {
+        debug(`Could not get the all letters to form an X at row ${position.row} | col ${position.col} => Skipping`);
+        return false;
     }
-}
-
-export const Part2 = part2;
+}).length;

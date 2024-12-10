@@ -23,7 +23,7 @@ const directionsToSearch = [
 ];
 
 const getDistinctHikingPathTargets = (matrix: Matrix<string>, position: Position): Position[] => {
-    const currentLevel = parseInt(matrix.getItemFor(position.row, position.col));
+    const currentLevel = parseInt(matrix.getItemFor(position));
 
     if (currentLevel === 9) {
         return [position];
@@ -38,7 +38,7 @@ const getDistinctHikingPathTargets = (matrix: Matrix<string>, position: Position
 }
 
 const countHikingPaths = (matrix: Matrix<string>, position: Position): number => {
-    const currentLevel = parseInt(matrix.getItemFor(position.row, position.col));
+    const currentLevel = parseInt(matrix.getItemFor(position));
 
     if (currentLevel === 9) {
         return 1;

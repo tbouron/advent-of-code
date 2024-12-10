@@ -26,10 +26,10 @@ let totalVisibleTrees = matrix.get().reduce((totalVisible, line, rowIndex, rows)
         }
 
         const neighbours = [
-            matrix.getItemsFrom(rowIndex, columnIndex, Direction.TOP),
-            matrix.getItemsFrom(rowIndex, columnIndex, Direction.LEFT),
-            matrix.getItemsFrom(rowIndex, columnIndex, Direction.BOTTOM),
-            matrix.getItemsFrom(rowIndex, columnIndex, Direction.RIGHT),
+            matrix.getItemsFrom({row: rowIndex, col: columnIndex}, Direction.TOP),
+            matrix.getItemsFrom({row: rowIndex, col: columnIndex}, Direction.LEFT),
+            matrix.getItemsFrom({row: rowIndex, col: columnIndex}, Direction.BOTTOM),
+            matrix.getItemsFrom({row: rowIndex, col: columnIndex}, Direction.RIGHT),
         ];
         if (neighbours.some(neighbour => neighbour.every(tree => tree < column))) {
             visibleTrees++;
@@ -60,7 +60,7 @@ const highestScenicScore = matrix.get().reduce((scenicScore, line, rowIndex, row
             Direction.BOTTOM,
             Direction.RIGHT
         ].map(direction => {
-            const treesForDirection = matrix.getItemsFrom(rowIndex, columnIndex, direction);
+            const treesForDirection = matrix.getItemsFrom({row: rowIndex, col: columnIndex}, direction);
             return treesForDirection.findIndex(v => v >= column) > -1
                 ? treesForDirection.findIndex(v => v >= column) + 1
                 : treesForDirection.length;

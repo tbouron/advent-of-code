@@ -15,6 +15,9 @@ const rawTestInput = fs.readFileSync(path.join(__dirname, `${path.basename(__fil
     .filter(line => line.trim() !== '')
     .map(line => line.split(''));
 
+console.log('/!\\ WARNING /!\\ This puzzle is sloooow, probably brute-forcing it. Take around 20 seconds to complete.');
+
+
 const directionMapping: {[key: string]: Direction} = {
     '^': Direction.TOP,
     'v': Direction.BOTTOM,
@@ -68,7 +71,7 @@ const walk = (matrix: Matrix<string>) => {
         }
 
         try {
-            const next = matrix.getItemFor(nextRow, nextCol);
+            const next = matrix.getItemFor({row: nextRow, col: nextCol});
             if (next === '#') {
                 direction = nextDirection;
                 debug(`Hitting obstacle => turning ${direction}`);
@@ -104,7 +107,7 @@ export const Part2 = sum(Array.from(positions)
             return 0;
         }
         const newMatrix = new Matrix(matrix.get());
-        newMatrix.setItemFor('#', p.row, p.col);
+        newMatrix.setItemFor(p, '#');
 
         const {isLoop} = walk(newMatrix);
 

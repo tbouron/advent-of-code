@@ -29,7 +29,7 @@ const findAntiNodesForPositions = (matrix: Matrix<string>, positions: { row: num
                 const row = position.row + diffRow * count;
                 const col = position.col + diffCol * count;
                 try {
-                    matrix.validate(row, col);
+                    matrix.validate({row, col});
                     an.push({row, col});
                     count++;
                     if (!withHarmonics) {
