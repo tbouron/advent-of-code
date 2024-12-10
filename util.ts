@@ -111,6 +111,48 @@ export class Matrix<T> {
         this.matrix[row][col] = item;
     }
 
+    getAdjacentItemsOf(position: Position, directions: Direction[]) {
+        return directions.map(direction => {
+            let nextPosition: Position;
+            switch (direction) {
+                case Direction.TOP:
+                    nextPosition = {row: position.row - 1, col: position.col};
+                    break;
+                case Direction.TOP_RIGHT:
+                    nextPosition = {row: position.row - 1, col: position.col + 1};
+                    break;
+                case Direction.RIGHT:
+                    nextPosition = {row: position.row, col: position.col + 1};
+                    break;
+                case Direction.BOTTOM_RIGHT:
+                    nextPosition = {row: position.row + 1, col: position.col + 1};
+                    break;
+                case Direction.BOTTOM:
+                    nextPosition = {row: position.row + 1, col: position.col};
+                    break;
+                case Direction.BOTTOM_LEFT:
+                    nextPosition = {row: position.row + 1, col: position.col - 1};
+                    break;
+                case Direction.LEFT:
+                    nextPosition = {row: position.row, col: position.col - 1};
+                    break;
+                case Direction.TOP_LEFT:
+                    nextPosition = {row: position.row - 1, col: position.col - 1};
+                    break;
+            }
+
+            try {
+                const valueFor = this.getItemFor(nextPosition.row, nextPosition.col);
+                return {
+                    position: nextPosition,
+                    value: valueFor
+                };
+            } catch (e) {
+                return null;
+            }
+        }).filter(item => item !== null) as {position: Position, value: T}[];
+    }
+
     getItemsFrom(row: number, col: number, direction: Direction) {
         this.validate(row, col);
 
@@ -173,7 +215,7 @@ export class Matrix<T> {
     }
 
     search(pattern: string) {
-        const map: {[key: string]: {row: number, col: number}[]} = {};
+        const map: {[key: string]: Position[]} = {};
         for (let row = 0; row < this.matrix.length; row++) {
             for (let col = 0; col < this.matrix[row].length; col++) {
                 const itemFor = this.getItemFor(row, col) as string;

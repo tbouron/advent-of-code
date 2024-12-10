@@ -29,33 +29,12 @@ const getDistinctHikingPathTargets = (matrix: Matrix<string>, position: Position
         return [position];
     }
 
-    return directionsToSearch.map(directionToSearch => {
-        return {
-            row: position.row + (directionToSearch === Direction.TOP
-                ? -1
-                : directionToSearch === Direction.BOTTOM
-                    ? 1
-                    : 0),
-            col: position.col + (directionToSearch === Direction.LEFT
-                ? -1
-                : directionToSearch === Direction.RIGHT
-                    ? 1
-                    : 0)
-        };
-    }).filter(p => {
-        try {
-            let nextLevel = parseInt(matrix.getItemFor(p.row, p.col));
-            if (isNaN(nextLevel)) {
-                nextLevel = -1;
-            }
-            return nextLevel - currentLevel === 1;
-        } catch (e) {
-            return false;
-        }
-    }).flatMap(p => {
-        debug(`[${position.row}, ${position.col}] => [${p.row}, ${p.col}]`);
-        return getDistinctHikingPathTargets(matrix, p);
-    });
+    return matrix.getAdjacentItemsOf(position, directionsToSearch)
+        .filter(i => parseInt(i.value) - currentLevel === 1)
+        .flatMap(item => {
+            debug(`[${position.row}, ${position.col}] => [${item.position.row}, ${item.position.col}]`);
+            return getDistinctHikingPathTargets(matrix, item.position);
+        });
 }
 
 const countHikingPaths = (matrix: Matrix<string>, position: Position): number => {
@@ -65,38 +44,16 @@ const countHikingPaths = (matrix: Matrix<string>, position: Position): number =>
         return 1;
     }
 
-    return sum(directionsToSearch.map(directionToSearch => {
-        return {
-            row: position.row + (directionToSearch === Direction.TOP
-                ? -1
-                : directionToSearch === Direction.BOTTOM
-                    ? 1
-                    : 0),
-            col: position.col + (directionToSearch === Direction.LEFT
-                ? -1
-                : directionToSearch === Direction.RIGHT
-                    ? 1
-                    : 0)
-        };
-    }).filter(p => {
-        try {
-            let nextLevel = parseInt(matrix.getItemFor(p.row, p.col));
-            if (isNaN(nextLevel)) {
-                nextLevel = -1;
-            }
-            return nextLevel - currentLevel === 1;
-        } catch (e) {
-            return false;
-        }
-    }).flatMap(p => {
-        debug(`[${position.row}, ${position.col}] => [${p.row}, ${p.col}]`);
-        return countHikingPaths(matrix, p);
-    }));
+    return sum(matrix.getAdjacentItemsOf(position, directionsToSearch)
+        .filter(i => parseInt(i.value) - currentLevel === 1)
+        .flatMap(item => {
+            debug(`[${position.row}, ${position.col}] => [${item.position.row}, ${item.position.col}]`);
+            return countHikingPaths(matrix, item.position);
+        }));
 }
 
 const matrix = new Matrix(rawInput);
 const trailheads = matrix.search('0');
-
 
 const scores = trailheads['0']?.flatMap(startPosition => {
     const trailheadDistinctTargets = new Set(getDistinctHikingPathTargets(matrix, startPosition).map(p => JSON.stringify(p))).size;
