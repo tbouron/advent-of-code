@@ -78,6 +78,8 @@ export enum Direction {
     RIGHT = 'RIGHT'
 }
 
+export type Position = { row: number, col: number }
+
 export class Matrix<T> {
 
     private readonly matrix: T[][];
