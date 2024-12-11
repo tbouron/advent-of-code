@@ -73,8 +73,8 @@ fs.readdirSync(yearToRun)
         }
 
         const stats = [
-            `ex. time ${readableTime(performance.now() - start)}`,
-            `mem. used: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`
+            readableTime(performance.now() - start),
+            `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`
         ];
 
         return {
@@ -86,7 +86,16 @@ fs.readdirSync(yearToRun)
         }
     }).forEach(o => {
         const message = [`=== [YEAR ${o.year}] DAY #${o.day} (${o.stats.join(' | ')})`];
-        if (o.exports) {
+        const exportsAsFunctions = Object.entries(o.exports || {}).filter(([exportKey, exportValue]) => {
+            return ['Part1', 'Part2'].includes(exportKey) && typeof exportValue === 'function'
+        }) as [string, () => any][];
+        if (exportsAsFunctions.length > 0) {
+            exportsAsFunctions.forEach(([exportKey, exportValue]) => {
+                const startPart = performance.now();
+                const returnedValue = exportValue.apply(null);
+                message.push(`|-> [${exportKey}] ${returnedValue} | ${readableTime(performance.now() - startPart)}`);
+            });
+        } else if (o.exports) {
             message.push(...Object.entries(o.exports).map(([exportKey, exportValue]) => `|-> [${exportKey}] ${exportValue}`));
         }
         if (o.error) {

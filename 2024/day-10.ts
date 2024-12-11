@@ -55,16 +55,20 @@ const countHikingPaths = (matrix: Matrix<string>, position: Position): number =>
 const matrix = new Matrix(rawInput);
 const trailheads = matrix.search('0');
 
-const scores = trailheads['0']?.flatMap(startPosition => {
-    const trailheadDistinctTargets = new Set(getDistinctHikingPathTargets(matrix, startPosition).map(p => JSON.stringify(p))).size;
-    debug(`Trailhead starting at row ${startPosition.row} | col ${startPosition.col} has ${trailheadDistinctTargets} distinct targets`);
-    return trailheadDistinctTargets;
-});
-export const Part1 = sum(scores);
+export const Part1 = () => {
+    const scores = trailheads['0']?.flatMap(startPosition => {
+        const trailheadDistinctTargets = new Set(getDistinctHikingPathTargets(matrix, startPosition).map(p => JSON.stringify(p))).size;
+        debug(`Trailhead starting at row ${startPosition.row} | col ${startPosition.col} has ${trailheadDistinctTargets} distinct targets`);
+        return trailheadDistinctTargets;
+    });
+    return sum(scores);
+}
 
-const hikingPaths = trailheads['0']?.flatMap(startPosition => {
-    const trailheadHikingPaths = countHikingPaths(matrix, startPosition);
-    debug(`Trailhead starting at row ${startPosition.row} | col ${startPosition.col} has ${trailheadHikingPaths} hiking paths`);
-    return trailheadHikingPaths;
-});
-export const Part2 = sum(hikingPaths);
+export const Part2 = () => {
+    const hikingPaths = trailheads['0']?.flatMap(startPosition => {
+        const trailheadHikingPaths = countHikingPaths(matrix, startPosition);
+        debug(`Trailhead starting at row ${startPosition.row} | col ${startPosition.col} has ${trailheadHikingPaths} hiking paths`);
+        return trailheadHikingPaths;
+    });
+    return sum(hikingPaths);
+}
