@@ -12,11 +12,10 @@ const rawTestInput = fs.readFileSync(path.join(__dirname, `${path.basename(__fil
     .split('\n')
     .filter(line => line.trim() !== '');
 
-const findInvalidIds= (input: string[], findAtLeastTwice = false): number => {
-    const sequenceTwiceRegex = /^(.+)\1$/g;
-    const sequenceAtLeastTwiceRegex = /^(.+)\1+$/g;
+const findInvalidIds= (input: string[], findPatternsRepeatingMoreThanOnce = false): number => {
+    const regex = new RegExp(`^(.+)\\1${findPatternsRepeatingMoreThanOnce ? '+' : ''}$`, 'g');
 
-    const result = input
+    return input
         // This explodes the ranges into the actual list of IDs
         .flatMap(l => l.split(',')
             .filter(r => r.trim() !== '')
@@ -25,21 +24,19 @@ const findInvalidIds= (input: string[], findAtLeastTwice = false): number => {
                 const delta = upperBound - lowerBound + 1;
 
                 // For each id, checks if it is invalid
-                return Array(delta).fill(0)
-                    .map((_, index) => lowerBound + index)
+                return Array<number>(delta).fill(lowerBound)
+                    .map((baseValue, index) => baseValue + index)
                     .filter(id => {
                         const idString = id.toString();
 
-                        const matches = idString.match(findAtLeastTwice ? sequenceAtLeastTwiceRegex : sequenceTwiceRegex) !== null;
-                        if (matches !== null) {
+                        const isMatching = regex.test(idString);
+                        if (isMatching) {
                             debug(`ID ${id} is invalid.`);
                         }
-                        return matches;
+                        return isMatching;
                     })
             }))
         .reduce((sum, id) => sum + id, 0);
-
-    return result;
 }
 
 export const Part1 = findInvalidIds(rawInput, false);
