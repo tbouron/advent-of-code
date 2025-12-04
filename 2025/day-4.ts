@@ -2,24 +2,25 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {ALL_DIRECTIONS, Matrix, sum} from "../util";
 
+type Item = '.' | '@';
+
 const debug = require('debug')(path.basename(__filename));
 
 const rawInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.txt`), 'utf8')
     .trim()
     .split('\n')
     .filter(line => line.trim() !== '')
-    .map(line => line.split(''));
+    .map(line => line.split('') as Item[]);
 const rawTestInput = fs.readFileSync(path.join(__dirname, `${path.basename(__filename, '.ts')}.test.1.txt`), 'utf8')
     .trim()
     .split('\n')
     .filter(line => line.trim() !== '')
-    .map(line => line.split(''));
+    .map(line => line.split('') as Item[]);
 
-const getMovableRolls = (input: string[][], keepRemoving = false): number => {
-    const matrix = new Matrix(input);
+const getMovableRolls = (matrix: Matrix<Item>, keepRemoving = false): number => {
     const updatedMatrix = new Matrix(matrix.get());
 
-    const movableRolls = sum(matrix.get().map((items, row) => {
+    let movableRolls = sum(matrix.get().map((items, row) => {
         return items.reduce((rowSum, item, col) => {
             if (item !== '@') {
                 return rowSum;
@@ -36,16 +37,12 @@ const getMovableRolls = (input: string[][], keepRemoving = false): number => {
         }, 0);
     }));
 
-    if (!keepRemoving) {
-        return movableRolls;
+    if (keepRemoving && movableRolls > 0) {
+        movableRolls += getMovableRolls(updatedMatrix, keepRemoving);
     }
 
-    if (movableRolls === 0) {
-        return movableRolls
-    } else {
-        return movableRolls + getMovableRolls(updatedMatrix.get(), keepRemoving);
-    }
+    return movableRolls;
 }
 
-export const Part1 = getMovableRolls(rawInput, false);
-export const Part2 = getMovableRolls(rawInput, true);
+export const Part1 = getMovableRolls(new Matrix<Item>(rawInput), false);
+export const Part2 = getMovableRolls(new Matrix<Item>(rawInput), true);
