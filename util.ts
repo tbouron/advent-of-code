@@ -78,6 +78,24 @@ export enum Direction {
     RIGHT = 'RIGHT'
 }
 
+export const ALL_DIRECTIONS = [
+    Direction.TOP,
+    Direction.TOP_LEFT,
+    Direction.LEFT,
+    Direction.BOTTOM_LEFT,
+    Direction.BOTTOM,
+    Direction.BOTTOM_RIGHT,
+    Direction.RIGHT,
+    Direction.TOP_RIGHT
+];
+
+export const NSWE = [
+    Direction.TOP,
+    Direction.LEFT,
+    Direction.BOTTOM,
+    Direction.RIGHT,
+];
+
 export type Position = { row: number, col: number }
 
 export class Matrix<T> {
